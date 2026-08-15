@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>EVM Voting System</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(
+                135deg,
+                #eef2ff,
+                #f8fafc
+            );
+
+            min-height: 100vh;
+            color: #1e293b;
+        }
+
+        nav {
+            background: #1e293b;
+            padding: 20px 8%;
+
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        nav h2 {
+            color: white;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+        }
+
+        .hero {
+            text-align: center;
+            padding: 90px 20px 60px;
+        }
+
+        .icon {
+            font-size: 70px;
+        }
+
+        .hero h1 {
+            font-size: 48px;
+            margin: 20px 0;
+        }
+
+        .hero p {
+            font-size: 20px;
+            color: #64748b;
+            margin-bottom: 35px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 15px 30px;
+            margin: 8px;
+
+            border-radius: 8px;
+
+            text-decoration: none;
+
+            font-size: 17px;
+        }
+
+        .vote-btn {
+            background: #2563eb;
+            color: white;
+        }
+
+        .admin-btn {
+            background: #1e293b;
+            color: white;
+        }
+
+        .features {
+            display: flex;
+            justify-content: center;
+
+            gap: 25px;
+
+            flex-wrap: wrap;
+
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+
+            width: 250px;
+
+            padding: 30px;
+
+            text-align: center;
+
+            border-radius: 12px;
+
+            box-shadow:
+                0 5px 20px
+                rgba(0,0,0,0.08);
+        }
+
+        .emoji {
+            font-size: 40px;
+        }
+
+        .card h3 {
+            margin: 15px 0 10px;
+        }
+
+        .card p {
+            color: #64748b;
+        }
+
+        footer {
+            text-align: center;
+
+            padding: 40px;
+
+            color: #64748b;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<nav>
+
+    <h2>🗳️ EVM System</h2>
+
+    <div>
+
+        <a href="/">Home</a>
+
+        <a href="/vote">Vote</a>
+
+        <a href="/admin">Admin</a>
+
+    </div>
+
+</nav>
+
+
+<section class="hero">
+
+    <div class="icon">
+        🗳️
+    </div>
+
+    <h1>
+        Electronic Voting System
+    </h1>
+
+    <p>
+        A simple digital voting system
+        built with Flask and MySQL.
+    </p>
+
+
+    <a href="/vote"
+       class="btn vote-btn">
+
+        🗳️ Start Voting
+
+    </a>
+
+
+    <a href="/admin"
+       class="btn admin-btn">
+
+        🔐 Admin Login
+
+    </a>
+
+</section>
+
+
+<section class="features">
+
+
+    <div class="card">
+
+        <div class="emoji">
+            🔐
+        </div>
+
+        <h3>
+            Secure Voting
+        </h3>
+
+        <p>
+            Each Voter ID can vote only once.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="emoji">
+            🗄️
+        </div>
+
+        <h3>
+            MySQL Database
+        </h3>
+
+        <p>
+            Voting information is stored
+            in MySQL.
+        </p>
+
+    </div>
+
+
+    <div class="card">
+
+        <div class="emoji">
+            📊
+        </div>
+
+        <h3>
+            Live Results
+        </h3>
+
+        <p>
+            Admin can view current
+            vote counts.
+        </p>
+
+    </div>
+
+
+</section>
+
+
+<footer>
+
+    © 2026 EVM Voting System |
+    Educational Project
+
+</footer>
+
+
+</body>
+
+</html>

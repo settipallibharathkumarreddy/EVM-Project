@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Election Results</title>
+
+    <style>
+
+        body {
+            font-family: Arial;
+
+            background: #eef2ff;
+
+            text-align: center;
+
+            padding: 50px 20px;
+        }
+
+        .box {
+            background: white;
+
+            width: 650px;
+
+            max-width: 100%;
+
+            margin: auto;
+
+            padding: 35px;
+
+            border-radius: 15px;
+
+            box-shadow:
+                0 5px 25px
+                rgba(0,0,0,0.1);
+        }
+
+        .candidate {
+            display: flex;
+
+            justify-content: space-between;
+
+            align-items: center;
+
+            padding: 18px;
+
+            margin: 12px 0;
+
+            border: 1px solid #ddd;
+
+            border-radius: 8px;
+        }
+
+        .name {
+            font-size: 18px;
+
+            font-weight: bold;
+        }
+
+        .votes {
+            font-weight: bold;
+
+            color: #2563eb;
+        }
+
+        .logout {
+            display: inline-block;
+
+            margin-top: 25px;
+
+            padding: 12px 25px;
+
+            background: #dc2626;
+
+            color: white;
+
+            text-decoration: none;
+
+            border-radius: 7px;
+        }
+
+    </style>
+
+</head>
+
+<body>
+
+
+<div class="box">
+
+
+    <h1>
+        📊 Election Results
+    </h1>
+
+
+    <p>
+        Current vote count
+    </p>
+
+
+    {% for candidate in candidates %}
+
+
+        <div class="candidate">
+
+
+            <span class="name">
+
+                {{ candidate[1] }}
+
+            </span>
+
+
+            <span class="votes">
+
+                🗳️ {{ candidate[2] }} Votes
+
+            </span>
+
+
+        </div>
+
+
+    {% endfor %}
+
+
+    <a
+        href="/logout"
+        class="logout">
+
+        Logout
+
+    </a>
+
+
+</div>
+
+
+</body>
+
+</html>
