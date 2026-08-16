@@ -1,3 +1,4 @@
+```python
 from flask import Flask, render_template, request, redirect, url_for, session
 import mysql.connector
 import os
@@ -15,35 +16,14 @@ app.secret_key = os.environ.get(
 # =========================
 
 def get_db_connection():
-
     return mysql.connector.connect(
-
-        host=os.environ.get(
-            "MYSQLHOST",
-            "localhost"
-        ),
-
-        port=int(
-            os.environ.get(
-                "MYSQLPORT",
-                3306
-            )
-        ),
-
-        user=os.environ.get(
-            "MYSQLUSER",
-            "root"
-        ),
-
-        password=os.environ.get(
-            "MYSQLPASSWORD",
-            "6619"
-        ),
-
-        database=os.environ.get(
-            "MYSQLDATABASE",
-            "evm_database"
-        )
+        host=os.environ.get("MYSQLHOST"),
+        port=int(os.environ.get("MYSQLPORT", "27306")),
+        user=os.environ.get("MYSQLUSER"),
+        password=os.environ.get("MYSQLPASSWORD"),
+        database=os.environ.get("MYSQLDATABASE", "defaultdb"),
+        ssl_verify_cert=True,
+        ssl_verify_identity=True
     )
 
 
@@ -53,10 +33,7 @@ def get_db_connection():
 
 @app.route("/")
 def home():
-
-    return render_template(
-        "index.html"
-    )
+    return render_template("index.html")
 
 
 # =========================
@@ -65,32 +42,20 @@ def home():
 
 @app.route("/vote")
 def vote():
-
-    return render_template(
-        "vote.html"
-    )
+    return render_template("vote.html")
 
 
 # =========================
 # CAST VOTE
 # =========================
 
-@app.route(
-    "/cast-vote",
-    methods=["POST"]
-)
+@app.route("/cast-vote", methods=["POST"])
 def cast_vote():
 
-    voter_id = request.form.get(
-        "voter_id"
-    )
-
-    candidate = request.form.get(
-        "candidate"
-    )
+    voter_id = request.form.get("voter_id")
+    candidate = request.form.get("candidate")
 
     if not voter_id or not candidate:
-
         return render_template(
             "success.html",
             success=False,
@@ -101,25 +66,16 @@ def cast_vote():
     cursor = None
 
     try:
-
         connection = get_db_connection()
-
         cursor = connection.cursor()
 
-        # Check duplicate vote
+        # Check whether voter already voted
         cursor.execute(
-            """
-            SELECT id
-            FROM votes
-            WHERE voter_id = %s
-            """,
+            "SELECT id FROM votes WHERE voter_id = %s",
             (voter_id,)
         )
 
-        existing_vote = cursor.fetchone()
-
-        if existing_vote:
-
+        if cursor.fetchone():
             return render_template(
                 "success.html",
                 success=False,
@@ -128,18 +84,13 @@ def cast_vote():
 
         # Find candidate
         cursor.execute(
-            """
-            SELECT id
-            FROM candidates
-            WHERE name = %s
-            """,
+            "SELECT id FROM candidates WHERE name = %s",
             (candidate,)
         )
 
         candidate_data = cursor.fetchone()
 
         if not candidate_data:
-
             return render_template(
                 "success.html",
                 success=False,
@@ -148,20 +99,16 @@ def cast_vote():
 
         candidate_id = candidate_data[0]
 
-        # Save vote
+        # Insert vote
         cursor.execute(
             """
-            INSERT INTO votes
-            (voter_id, candidate_id)
+            INSERT INTO votes (voter_id, candidate_id)
             VALUES (%s, %s)
             """,
-            (
-                voter_id,
-                candidate_id
-            )
+            (voter_id, candidate_id)
         )
 
-        # Increase candidate votes
+        # Increase candidate vote count
         cursor.execute(
             """
             UPDATE candidates
@@ -205,42 +152,24 @@ def cast_vote():
 
 @app.route("/admin")
 def admin():
-
-    return render_template(
-        "admin.html"
-    )
+    return render_template("admin.html")
 
 
 # =========================
 # ADMIN LOGIN
 # =========================
 
-@app.route(
-    "/admin-login",
-    methods=["POST"]
-)
+@app.route("/admin-login", methods=["POST"])
 def admin_login():
 
-    username = request.form.get(
-        "username"
-    )
+    username = request.form.get("username")
+    password = request.form.get("password")
 
-    password = request.form.get(
-        "password"
-    )
+    if username == "admin" and password == "admin123":
 
-    if (
-        username == "admin"
-        and password == "admin123"
-    ):
+        session["admin_logged_in"] = True
 
-        session[
-            "admin_logged_in"
-        ] = True
-
-        return redirect(
-            url_for("results")
-        )
+        return redirect(url_for("results"))
 
     return render_template(
         "admin.html",
@@ -255,13 +184,8 @@ def admin_login():
 @app.route("/results")
 def results():
 
-    if not session.get(
-        "admin_logged_in"
-    ):
-
-        return redirect(
-            url_for("admin")
-        )
+    if not session.get("admin_logged_in"):
+        return redirect(url_for("admin"))
 
     connection = None
     cursor = None
@@ -269,7 +193,6 @@ def results():
     try:
 
         connection = get_db_connection()
-
         cursor = connection.cursor()
 
         cursor.execute(
@@ -309,9 +232,7 @@ def logout():
 
     session.clear()
 
-    return redirect(
-        url_for("home")
-    )
+    return redirect(url_for("home"))
 
 
 # =========================
@@ -320,15 +241,11 @@ def logout():
 
 if __name__ == "__main__":
 
-    port = int(
-        os.environ.get(
-            "PORT",
-            5000
-        )
-    )
+    port = int(os.environ.get("PORT", 5000))
 
     app.run(
         host="0.0.0.0",
         port=port,
         debug=False
     )
+```
