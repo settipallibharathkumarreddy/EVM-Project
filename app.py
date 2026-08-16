@@ -1,9 +1,12 @@
-```python
 from flask import Flask, render_template, request, redirect, url_for, session
 import mysql.connector
 import os
 
 app = Flask(__name__)
+
+# =========================
+# SECRET KEY
+# =========================
 
 app.secret_key = os.environ.get(
     "SECRET_KEY",
@@ -17,18 +20,31 @@ app.secret_key = os.environ.get(
 
 def get_db_connection():
     return mysql.connector.connect(
-        host=os.environ.get("MYSQLHOST"),
-        port=int(os.environ.get("MYSQLPORT", "27306")),
-        user=os.environ.get("MYSQLUSER"),
+        host=os.environ.get(
+            "MYSQLHOST",
+            "mysql-50f4952-settipallibharathkumarreddy17-6b02.l.aivencloud.com"
+        ),
+        port=int(
+            os.environ.get("MYSQLPORT", "27306")
+        ),
+        user=os.environ.get(
+            "MYSQLUSER",
+            "avnadmin"
+        ),
         password=os.environ.get("MYSQLPASSWORD"),
-        database=os.environ.get("MYSQLDATABASE", "defaultdb"),
+        database=os.environ.get(
+            "MYSQLDATABASE",
+            "defaultdb"
+        ),
+
+        # Aiven SSL
         ssl_verify_cert=True,
         ssl_verify_identity=True
     )
 
 
 # =========================
-# HOME
+# HOME PAGE
 # =========================
 
 @app.route("/")
@@ -66,25 +82,42 @@ def cast_vote():
     cursor = None
 
     try:
+
         connection = get_db_connection()
         cursor = connection.cursor()
 
-        # Check whether voter already voted
+        # =========================
+        # CHECK DUPLICATE VOTE
+        # =========================
+
         cursor.execute(
-            "SELECT id FROM votes WHERE voter_id = %s",
+            """
+            SELECT id
+            FROM votes
+            WHERE voter_id = %s
+            """,
             (voter_id,)
         )
 
-        if cursor.fetchone():
+        existing_vote = cursor.fetchone()
+
+        if existing_vote:
             return render_template(
                 "success.html",
                 success=False,
                 message="This Voter ID has already voted."
             )
 
-        # Find candidate
+        # =========================
+        # FIND CANDIDATE
+        # =========================
+
         cursor.execute(
-            "SELECT id FROM candidates WHERE name = %s",
+            """
+            SELECT id
+            FROM candidates
+            WHERE name = %s
+            """,
             (candidate,)
         )
 
@@ -99,16 +132,23 @@ def cast_vote():
 
         candidate_id = candidate_data[0]
 
-        # Insert vote
+        # =========================
+        # INSERT VOTE
+        # =========================
+
         cursor.execute(
             """
-            INSERT INTO votes (voter_id, candidate_id)
+            INSERT INTO votes
+            (voter_id, candidate_id)
             VALUES (%s, %s)
             """,
             (voter_id, candidate_id)
         )
 
-        # Increase candidate vote count
+        # =========================
+        # UPDATE VOTE COUNT
+        # =========================
+
         cursor.execute(
             """
             UPDATE candidates
@@ -117,6 +157,10 @@ def cast_vote():
             """,
             (candidate_id,)
         )
+
+        # =========================
+        # SAVE CHANGES
+        # =========================
 
         connection.commit()
 
@@ -178,7 +222,7 @@ def admin_login():
 
 
 # =========================
-# RESULTS
+# RESULTS PAGE
 # =========================
 
 @app.route("/results")
@@ -212,7 +256,11 @@ def results():
 
     except mysql.connector.Error as error:
 
-        return f"Database error: {error}"
+        return render_template(
+            "results.html",
+            candidates=[],
+            error=f"Database error: {error}"
+        )
 
     finally:
 
@@ -241,11 +289,12 @@ def logout():
 
 if __name__ == "__main__":
 
-    port = int(os.environ.get("PORT", 5000))
+    port = int(
+        os.environ.get("PORT", 5000)
+    )
 
     app.run(
         host="0.0.0.0",
         port=port,
         debug=False
     )
-```
